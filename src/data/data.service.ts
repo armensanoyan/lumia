@@ -19,6 +19,7 @@ export class DataService {
   constructor() {
     this.dataCollection = MongoClient.getCollection(mongoConfig.collection);
     this.redisClient = RedisStorage;
+    this.kafkaProducerService = KafkaProducerService;
   }
 
   async findAll(
@@ -33,7 +34,7 @@ export class DataService {
         ...searchDto,
         results,
       };
-      await this.dataCollection.insertOne(mongoData);
+      const { insertedId } = await this.dataCollection.insertOne(mongoData);
 
       const executionTime = Date.now() - startTime;
 
@@ -42,6 +43,18 @@ export class DataService {
         endpointName,
         method,
         startTime.toString(),
+      );
+
+      const kafkaMessage = {
+        id: insertedId,
+        startTime,
+        title: searchDto.title,
+        tags: searchDto.tags,
+      };
+
+      await this.kafkaProducerService.sendMessage(
+        'search-results',
+        kafkaMessage,
       );
 
       return results;
