@@ -1,4 +1,5 @@
 import { Kafka, Producer, ProducerRecord } from 'kafkajs';
+import { kafkaConfig } from '../config/config';
 
 class KafkaProducerService {
   private producer: Producer;
@@ -6,8 +7,8 @@ class KafkaProducerService {
 
   constructor() {
     this.kafka = new Kafka({
-      clientId: 'my-app',
-      brokers: ['localhost:9092'],
+      clientId: kafkaConfig.clientId,
+      brokers: [kafkaConfig.url],
     });
 
     this.producer = this.kafka.producer();

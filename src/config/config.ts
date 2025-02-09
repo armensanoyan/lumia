@@ -10,3 +10,13 @@ export const mongoConfig = {
   database: process.env.MONGODB_DB_NAME || 'stackoverflow',
   collection: process.env.MONGODB_COLLECTION || 'questions',
 };
+
+export const redisConfig = {
+  url: process.env.REDIS_URL || 'redis://localhost:6379',
+  password: process.env.REDIS_PASSWORD || 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81',
+};
+
+export const kafkaConfig = {
+  url: process.env.KAFKA_BROKER || 'localhost:9092',
+  clientId: process.env.KAFKA_CLIENT_ID || 'service-a',
+};

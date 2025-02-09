@@ -1,16 +1,19 @@
 import { RedisCommandRawReply } from '@redis/client/dist/lib/commands';
 import { createClient, RedisClientType } from 'redis';
 import { LogsDto } from 'src/data/dto/logs.dto';
+import { redisConfig } from '../config/config';
 
 class RedisStorage {
   private static instance: RedisStorage;
   private client: RedisClientType;
 
-  private constructor(url: string = 'redis://localhost:6379') {
+  private constructor(
+    url: string = redisConfig.url,
+    password: string = redisConfig.password,
+  ) {
     this.client = createClient({
       url: url,
-      password:
-        process.env.REDIS_PASSWORD || 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81',
+      password: password,
     });
 
     this.client.on('error', (err: Error) => {

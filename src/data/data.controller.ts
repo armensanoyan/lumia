@@ -14,9 +14,15 @@ export class DataController {
     return this.dataService.getExecutionTime(logsDto);
   }
 
-  @Get('native')
-  searchNative(@Query() searchDto: SearchDto): Promise<SearchResultDto[]> {
-    return this.dataService.searchNative(searchDto);
+  @Get('native-search')
+  searchNative(
+    @Query() searchDto: SearchDto,
+    @Req() request: Request,
+  ): Promise<SearchResultDto[]> {
+    const endpointName = (request.url || '/data').split('?')[0];
+    const method = request.method;
+
+    return this.dataService.searchNative(searchDto, endpointName, method);
   }
 
   @Get()

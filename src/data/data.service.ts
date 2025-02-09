@@ -68,14 +68,29 @@ export class DataService {
     return this.redisClient.getExecutionTime(logsDto);
   }
 
-  async searchNative(searchDto: SearchDto): Promise<SearchResultDto[]> {
+  async searchNative(
+    searchDto: SearchDto,
+    endpointName: string,
+    method: string,
+  ): Promise<SearchResultDto[]> {
     const { title, limit = 10, offset = 0 } = searchDto;
 
+    const startTime = Date.now();
     const results = await this.dataCollection
       .find<SearchResultDto>({ title }) // TODO: partial match on title
       .skip(offset)
       .limit(limit)
       .toArray();
+
+    const executionTime = Date.now() - startTime;
+
+    await this.redisClient.logExecutionTime(
+      Math.floor(executionTime),
+      endpointName,
+      method,
+      startTime.toString(),
+    );
+
     return results;
   }
 }
