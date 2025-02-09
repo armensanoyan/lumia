@@ -1,5 +1,6 @@
-import { createClient } from 'redis';
-import { RedisClientType } from '@redis/client';
+import { RedisCommandRawReply } from '@redis/client/dist/lib/commands';
+import { createClient, RedisClientType } from 'redis';
+import { LogsDto } from 'src/data/dto/logs.dto';
 
 class RedisStorage {
   private static instance: RedisStorage;
@@ -19,6 +20,36 @@ class RedisStorage {
     this.client.on('connect', () => {
       console.log('Redis Client Connected');
     });
+  }
+
+  async logExecutionTime(
+    executionTime: number,
+    endpoint: string,
+    method: string,
+    timestamp: string,
+  ) {
+    const apiName = `${endpoint}-${method}`;
+
+    await this.client
+      .sendCommand(['TS.CREATE', apiName, 'RETENTION', '86400000'])
+      .catch(console.log);
+
+    const command = ['TS.ADD', apiName, timestamp, executionTime.toString()];
+    await this.client.sendCommand(command);
+  }
+
+  public async getExecutionTime(
+    logsDto: LogsDto,
+  ): Promise<RedisCommandRawReply> {
+    const { endpoint, method, from, to } = logsDto;
+    const fromDate = new Date(from).getTime().toString();
+    const toDate = new Date(to).getTime().toString();
+    const apiName = `${endpoint}-${method.toUpperCase()}`;
+
+    const command = ['TS.RANGE', apiName, fromDate, toDate];
+    const data = await this.client.sendCommand(command).catch(() => []);
+
+    return data;
   }
 
   public static getInstance(): RedisStorage {

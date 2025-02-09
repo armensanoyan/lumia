@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import MongoClient from './storages/mongodb';
 import RedisClient from './storages/redis';
 import KafkaProducerService from './services/kafka';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   await MongoClient.connect();
@@ -11,6 +12,14 @@ async function bootstrap() {
   await KafkaProducerService.connect();
 
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('API')

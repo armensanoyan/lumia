@@ -40,7 +40,6 @@ Thumbs.db
 *.temp
 
 # Docker volumes
-data/
 kafka-data/
 mongo-data/
 redis-data/

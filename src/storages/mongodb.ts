@@ -1,4 +1,7 @@
 import { MongoClient as MC, Db, Collection } from 'mongodb';
+import { mongoConfig } from '../config/config';
+
+const { url, database, collection } = mongoConfig;
 
 class MongoClient {
   private static instance: MongoClient;
@@ -7,10 +10,7 @@ class MongoClient {
   private uri: string;
 
   private constructor() {
-    const host = process.env.NODE_ENV === 'production' ? 'mongo' : 'localhost';
-    this.uri = `mongodb://${process.env.MONGO_USER || 'root'}:${
-      process.env.MONGO_PASSWORD || 'example'
-    }@${host}:27017`;
+    this.uri = url;
   }
 
   public static getInstance(): MongoClient {
@@ -23,7 +23,12 @@ class MongoClient {
   public async connect(): Promise<void> {
     try {
       this.client = await MC.connect(this.uri);
-      this.db = this.client.db(process.env.MONGODB_DB_NAME || 'myapp');
+      this.db = this.client.db(database);
+
+      await this.db
+        .collection(collection)
+        .createIndex({ title: 1 }, { background: true }); // Add tags in case of searching by tags
+
       console.log('Successfully connected to MongoDB.');
     } catch (error) {
       console.error('Error connecting to MongoDB:', error);
@@ -60,4 +65,6 @@ class MongoClient {
   }
 }
 
-export default MongoClient.getInstance();
+const mongoClient = MongoClient.getInstance();
+
+export default mongoClient;
