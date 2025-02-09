@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
-import { stackOverFlowConfig } from 'src/config/config';
-import { SearchResultDto } from 'src/data/dto/search-results.dto';
-import { SearchDto } from 'src/data/dto/search.dto';
+import { stackOverFlowConfig } from '../config/config';
+import { SearchResultDto } from '../data/dto/search-results.dto';
+import { SearchDto } from '../data/dto/search.dto';
 
 const { site, order, sort } = stackOverFlowConfig;
 interface StackOverflowResponse {

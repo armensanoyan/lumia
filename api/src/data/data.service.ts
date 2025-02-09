@@ -8,7 +8,7 @@ import { searchByTitleAndTags } from '../services/stackoverflow';
 import { RedisCommandRawReply } from '@redis/client/dist/lib/commands';
 import { LogsDto } from './dto/logs.dto';
 import { SearchResultDto } from './dto/search-results.dto';
-import { mongoConfig } from '../config/config';
+import { kafkaConfig, mongoConfig } from '../config/config';
 
 @Injectable()
 export class DataService {
@@ -53,7 +53,7 @@ export class DataService {
       };
 
       await this.kafkaProducerService.sendMessage(
-        'search-results',
+        kafkaConfig.topic,
         kafkaMessage,
       );
 

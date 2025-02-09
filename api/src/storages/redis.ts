@@ -1,6 +1,6 @@
 import { RedisCommandRawReply } from '@redis/client/dist/lib/commands';
 import { createClient, RedisClientType } from 'redis';
-import { LogsDto } from 'src/data/dto/logs.dto';
+import { LogsDto } from '../data/dto/logs.dto';
 import { redisConfig } from '../config/config';
 
 class RedisStorage {

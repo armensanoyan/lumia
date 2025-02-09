@@ -51,11 +51,11 @@ services:
     restart: unless-stopped
       
 
-  service-a:
+  api:
     build:
-      context: .
+      context: ./api
       dockerfile: Dockerfile
-    container_name: service-a
+    container_name: api
     restart: always
     ports:
       - 8081:8081
@@ -67,12 +67,32 @@ services:
       REDIS_URL: redis://cache:6379
       REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
       KAFKA_BROKER: kafka:29092
-      KAFKA_CLIENT_ID: service-a
+      KAFKA_CLIENT_ID: api
+      KAFKA_TOPIC: search-results
     depends_on:
       - mongo
       - cache
       - kafka
 
+  listener:
+    build:
+      context: ./listener
+      dockerfile: Dockerfile
+    container_name: listener
+    restart: always
+    ports:
+      - 3001:3001
+    environment:
+      PORT: 3001
+      KAFKA_BROKER: kafka:29092
+      KAFKA_CLIENT_ID: listener
+      KAFKA_TOPIC: search-results
+      MONGO_URL: mongodb://root:example@mongo:27017/
+      MONGODB_DB_NAME: stackoverflow
+      MONGODB_COLLECTION: search-logs
+    depends_on:
+      - mongo
+      - kafka
 
 # Add this volumes section at the root level
 volumes:

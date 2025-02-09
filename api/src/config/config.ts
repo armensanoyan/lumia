@@ -18,5 +18,6 @@ export const redisConfig = {
 
 export const kafkaConfig = {
   url: process.env.KAFKA_BROKER || 'localhost:9092',
-  clientId: process.env.KAFKA_CLIENT_ID || 'service-a',
+  clientId: process.env.KAFKA_CLIENT_ID || 'api',
+  topic: process.env.KAFKA_TOPIC || 'search-results',
 };
