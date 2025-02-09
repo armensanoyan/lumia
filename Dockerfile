@@ -1,13 +1,13 @@
 # Build stage
 FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
 # Copy package files
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY . .
@@ -15,8 +15,8 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Expose port 3000
-EXPOSE 3000
+# Expose port 8081
+EXPOSE 8081
 
 # Start the application
 CMD ["npm", "run", "start:prod"]
