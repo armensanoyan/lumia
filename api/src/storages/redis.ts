@@ -1,6 +1,6 @@
 import { RedisCommandRawReply } from '@redis/client/dist/lib/commands';
 import { createClient, RedisClientType } from 'redis';
-import { LogsDto } from '../data/dto/logs.dto';
+import { GetAnalyticsDto } from '../analytics/dto/get-analytics.dto';
 import { redisConfig } from '../config/config';
 
 class RedisStorage {
@@ -42,9 +42,9 @@ class RedisStorage {
   }
 
   public async getExecutionTime(
-    logsDto: LogsDto,
+    getAnalyticsDto: GetAnalyticsDto,
   ): Promise<RedisCommandRawReply> {
-    const { endpoint, method, from, to } = logsDto;
+    const { endpoint, method, from, to } = getAnalyticsDto;
     const fromDate = new Date(from).getTime().toString();
     const toDate = new Date(to).getTime().toString();
     const apiName = `${endpoint}-${method.toUpperCase()}`;

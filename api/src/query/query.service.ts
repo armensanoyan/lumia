@@ -5,13 +5,11 @@ import { Collection } from 'mongodb';
 import RedisStorage from '../storages/redis';
 import KafkaProducerService from '../services/kafka';
 import { searchByTitleAndTags } from '../services/stackoverflow';
-import { RedisCommandRawReply } from '@redis/client/dist/lib/commands';
-import { LogsDto } from './dto/logs.dto';
 import { SearchResultDto } from './dto/search-results.dto';
 import { kafkaConfig, mongoConfig } from '../config/config';
 
 @Injectable()
-export class DataService {
+export class QueryService {
   private readonly dataCollection: Collection;
   private readonly redisClient: typeof RedisStorage;
   private readonly kafkaProducerService: typeof KafkaProducerService;
@@ -62,10 +60,6 @@ export class DataService {
       console.error('Error in findAll:', error);
       return [];
     }
-  }
-
-  async getExecutionTime(logsDto: LogsDto): Promise<RedisCommandRawReply> {
-    return this.redisClient.getExecutionTime(logsDto);
   }
 
   async searchNative(

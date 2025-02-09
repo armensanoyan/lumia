@@ -81,9 +81,9 @@ services:
     container_name: listener
     restart: always
     ports:
-      - 3001:3001
+      - 8082:8082
     environment:
-      PORT: 3001
+      PORT: 8082
       KAFKA_BROKER: kafka:29092
       KAFKA_CLIENT_ID: listener
       KAFKA_TOPIC: search-results

@@ -1,18 +1,12 @@
 import { Controller, Get, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { DataService } from './data.service';
+import { QueryService } from './query.service';
 import { SearchDto } from './dto/search.dto';
-import { LogsDto } from './dto/logs.dto';
 import { SearchResultDto } from './dto/search-results.dto';
 
-@Controller('data')
-export class DataController {
-  constructor(private readonly dataService: DataService) {}
-
-  @Get('execution-time')
-  getExecutionTime(@Query() logsDto: LogsDto) {
-    return this.dataService.getExecutionTime(logsDto);
-  }
+@Controller('query')
+export class QueryController {
+  constructor(private readonly queryService: QueryService) {}
 
   @Get('native-search')
   searchNative(
@@ -22,7 +16,7 @@ export class DataController {
     const endpointName = (request.url || '/data').split('?')[0];
     const method = request.method;
 
-    return this.dataService.searchNative(searchDto, endpointName, method);
+    return this.queryService.searchNative(searchDto, endpointName, method);
   }
 
   @Get()
@@ -33,6 +27,6 @@ export class DataController {
     const endpointName = (request.url || '/data').split('?')[0];
     const method = request.method;
 
-    return this.dataService.findAll(searchDto, endpointName, method);
+    return this.queryService.findAll(searchDto, endpointName, method);
   }
 }

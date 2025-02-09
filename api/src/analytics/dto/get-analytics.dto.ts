@@ -1,7 +1,7 @@
 import { IsString, IsNotEmpty, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class LogsDto {
+export class GetAnalyticsDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({

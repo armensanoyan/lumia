@@ -1,7 +1,7 @@
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 import { stackOverFlowConfig } from '../config/config';
-import { SearchResultDto } from '../data/dto/search-results.dto';
-import { SearchDto } from '../data/dto/search.dto';
+import { SearchResultDto } from '../query/dto/search-results.dto';
+import { SearchDto } from '../query/dto/search.dto';
 
 const { site, order, sort } = stackOverFlowConfig;
 interface StackOverflowResponse {
@@ -30,7 +30,10 @@ export async function searchByTitleAndTags({
   const url = `${stackOverFlowConfig.url}?${params.toString()}`;
 
   try {
-    const response = await fetch(url);
+    const response: Response = await fetch(url);
+    if (!response?.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = (await response.json()) as StackOverflowResponse;
     return data.items;
   } catch (error: unknown) {
