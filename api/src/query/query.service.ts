@@ -7,17 +7,20 @@ import KafkaProducerService from '../services/kafka';
 import { searchByTitleAndTags } from '../services/stackoverflow';
 import { SearchResultDto } from './dto/search-results.dto';
 import { kafkaConfig, mongoConfig } from '../config/config';
+import { QueryRepository } from './query.repository';
 
 @Injectable()
 export class QueryService {
   private readonly dataCollection: Collection;
   private readonly redisClient: typeof RedisStorage;
   private readonly kafkaProducerService: typeof KafkaProducerService;
+  private readonly queryRepository: QueryRepository;
 
   constructor() {
     this.dataCollection = MongoClient.getCollection(mongoConfig.collection);
     this.redisClient = RedisStorage;
     this.kafkaProducerService = KafkaProducerService;
+    this.queryRepository = new QueryRepository();
   }
 
   async findAll(
@@ -32,7 +35,7 @@ export class QueryService {
         ...searchDto,
         results,
       };
-      const { insertedId } = await this.dataCollection.insertOne(mongoData);
+      const { insertedId } = await this.queryRepository.addQuery(mongoData);
 
       const executionTime = Date.now() - startTime;
 
@@ -50,10 +53,9 @@ export class QueryService {
         tags: searchDto.tags,
       };
 
-      await this.kafkaProducerService.sendMessage(
-        kafkaConfig.topic,
-        kafkaMessage,
-      );
+      this.kafkaProducerService // we don't have to await this
+        .sendMessage(kafkaConfig.topic, kafkaMessage)
+        .catch(console.error);
 
       return results;
     } catch (error) {
@@ -67,14 +69,8 @@ export class QueryService {
     endpointName: string,
     method: string,
   ): Promise<SearchResultDto[]> {
-    const { title, limit = 10, offset = 0 } = searchDto;
-
     const startTime = Date.now();
-    const results = await this.dataCollection
-      .find<SearchResultDto>({ title }) // TODO: partial match on title
-      .skip(offset)
-      .limit(limit)
-      .toArray();
+    const results = await this.queryRepository.findByTitle(searchDto);
 
     const executionTime = Date.now() - startTime;
 

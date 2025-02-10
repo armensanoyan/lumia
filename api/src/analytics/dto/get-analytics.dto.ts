@@ -6,7 +6,7 @@ export class GetAnalyticsDto {
   @IsNotEmpty()
   @ApiProperty({
     description: 'The endpoint of the API',
-    example: '/api/v1/users',
+    example: '/query',
   })
   endpoint: string;
 

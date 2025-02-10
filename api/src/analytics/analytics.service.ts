@@ -10,7 +10,12 @@ export class AnalyticsService {
     this.redisClient = RedisStorage;
   }
 
-  findAll(logsDto: GetAnalyticsDto) {
-    return this.redisClient.getExecutionTime(logsDto);
+  async findAll(logsDto: GetAnalyticsDto) {
+    try {
+      return await this.redisClient.getExecutionTime(logsDto);
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+      return [];
+    }
   }
 }

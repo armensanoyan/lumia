@@ -13,7 +13,7 @@ export class QueryController {
     @Query() searchDto: SearchDto,
     @Req() request: Request,
   ): Promise<SearchResultDto[]> {
-    const endpointName = (request.url || '/data').split('?')[0];
+    const endpointName = request.url.split('?')[0];
     const method = request.method;
 
     return this.queryService.searchNative(searchDto, endpointName, method);
@@ -24,7 +24,7 @@ export class QueryController {
     @Query() searchDto: SearchDto,
     @Req() request: Request,
   ): Promise<SearchResultDto[]> {
-    const endpointName = (request.url || '/data').split('?')[0];
+    const endpointName = request.url.split('?')[0];
     const method = request.method;
 
     return this.queryService.findAll(searchDto, endpointName, method);

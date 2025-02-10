@@ -1,12 +1,12 @@
 export const kafkaConfig = {
-  url: process.env.KAFKA_BROKER || 'localhost:9092',
-  clientId: process.env.KAFKA_CLIENT_ID || 'listener',
-  groupId: process.env.KAFKA_GROUP_ID || 'listener-group',
-  topic: process.env.KAFKA_TOPIC || 'search-results',
+  url: process.env.KAFKA_BROKER as string,
+  clientId: process.env.KAFKA_LISTENER_CLIENT_ID as string,
+  groupId: process.env.KAFKA_GROUP_ID as string,
+  topic: process.env.KAFKA_TOPIC as string,
 };
 
 export const mongoConfig = {
-  url: process.env.MONGO_URL || `mongodb://root:example@localhost:27017`,
-  database: process.env.MONGODB_DB_NAME || 'stackoverflow',
-  collection: process.env.MONGODB_COLLECTION || 'search-logs',
+  url: process.env.MONGO_URL as string,
+  database: process.env.MONGODB_DB_NAME as string,
+  collection: process.env.MONGODB_COLLECTION as string,
 };

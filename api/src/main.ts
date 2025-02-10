@@ -1,3 +1,10 @@
+import * as dotenv from 'dotenv';
+import { join } from 'path';
+import { validateEnv } from './utils/validateEnv';
+
+dotenv.config({ path: join(__dirname, '../../.env') });
+validateEnv();
+
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -7,9 +14,11 @@ import KafkaProducerService from './services/kafka';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  await MongoClient.connect();
-  await RedisClient.connect();
-  await KafkaProducerService.connect();
+  await Promise.all([
+    MongoClient.connect(),
+    RedisClient.connect(),
+    KafkaProducerService.connect(),
+  ]);
 
   const app = await NestFactory.create(AppModule);
 
@@ -22,10 +31,10 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API description')
+    .setTitle('StackOverflow API')
+    .setDescription('API for StackOverflow')
     .setVersion('1.0')
-    .addTag('API')
+    .addTag('StackOverflow')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
@@ -35,9 +44,11 @@ async function bootstrap() {
   signals.forEach((signal) => {
     process.on(signal, () => {
       // Handle shutdown synchronously
-      MongoClient.disconnect()
-        .then(() => RedisClient.disconnect())
-        .then(() => KafkaProducerService.disconnect())
+      Promise.all([
+        MongoClient.disconnect(),
+        RedisClient.disconnect(),
+        KafkaProducerService.disconnect(),
+      ])
         .then(() => app.close())
         .then(() => process.exit(0))
         .catch((err) => {

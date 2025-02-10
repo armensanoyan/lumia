@@ -67,8 +67,12 @@ services:
       REDIS_URL: redis://cache:6379
       REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
       KAFKA_BROKER: kafka:29092
-      KAFKA_CLIENT_ID: api
+      KAFKA_PRODUCER_CLIENT_ID: api
       KAFKA_TOPIC: search-results
+      STACKOVERFLOW_API_URL: https://api.stackexchange.com/2.3/search
+      STACKOVERFLOW_SITE: stackoverflow
+      STACKOVERFLOW_ORDER: desc
+      STACKOVERFLOW_SORT: activity
     depends_on:
       - mongo
       - cache
@@ -85,8 +89,9 @@ services:
     environment:
       PORT: 8082
       KAFKA_BROKER: kafka:29092
-      KAFKA_CLIENT_ID: listener
+      KAFKA_LISTENER_CLIENT_ID: listener
       KAFKA_TOPIC: search-results
+      KAFKA_GROUP_ID: listener-group
       MONGO_URL: mongodb://root:example@mongo:27017/
       MONGODB_DB_NAME: stackoverflow
       MONGODB_COLLECTION: search-logs
