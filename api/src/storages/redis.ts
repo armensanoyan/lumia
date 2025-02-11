@@ -35,7 +35,9 @@ class RedisStorage {
 
     await this.client
       .sendCommand(['TS.CREATE', apiName, 'RETENTION', '86400000'])
-      .catch(console.log);
+      .catch(() =>
+        console.log('redis time series key with this name already exists'),
+      );
 
     const command = ['TS.ADD', apiName, timestamp, executionTime.toString()];
     await this.client.sendCommand(command);
@@ -65,6 +67,7 @@ class RedisStorage {
   public async connect(): Promise<void> {
     try {
       await this.client.connect();
+      console.log('Successfully connected to Redis.');
     } catch (error: unknown) {
       console.error('Failed to connect to Redis:', error);
       throw new Error(
@@ -78,6 +81,7 @@ class RedisStorage {
   public async disconnect(): Promise<void> {
     try {
       await this.client.disconnect();
+      console.log('Successfully disconnected from Redis.');
     } catch (error: unknown) {
       console.error('Failed to disconnect from Redis:', error);
       throw new Error(
